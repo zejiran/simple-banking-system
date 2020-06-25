@@ -7,6 +7,23 @@ Simple Banking System Module.
 from random import randint
 
 
+def odd_multiply(numbers):
+    for i in range(1, len(numbers) + 1):
+        if i % 2 != 0:
+            numbers[i - 1] *= 2
+    return numbers
+
+
+def luhn_algorithm(iin, can):
+    str_15_digits = f'{iin}{can}'
+    numbers = list(map(lambda x: int(x), str_15_digits))
+    odd_by_two = odd_multiply(numbers)
+    subtracted = map(lambda x: x - 9 if x > 9 else x, odd_by_two)
+    checksum = sum(subtracted)
+    control_n = 10 - (checksum % 10)
+    return control_n if control_n < 10 else 0
+
+
 class Account:
     def __init__(self):
         self.card_number = None
@@ -16,7 +33,7 @@ class Account:
     def generate_card_number(self):
         issuer_identification_number = 400000
         customer_account_number = ''.join(f'{randint(0, 9)}' for _ in range(9))
-        checksum = 7
+        checksum = luhn_algorithm(issuer_identification_number, customer_account_number)
         self.card_number = f'{issuer_identification_number}{customer_account_number}{checksum}'
 
     def generate_pin_code(self):
